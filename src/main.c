@@ -1,4 +1,5 @@
 #include "window.h"
+#include "utils.h"
 
 __attribute__((constructor)) static void init() {
     LOG_INIT;
@@ -9,34 +10,18 @@ __attribute__((destructor)) static void end() {
 }
 
 int main(int argc, char* argv[]) {
-    Font* font = font_load_ppm("font.ppm", 10, 10);
+    Font* font = font_load_ppm("./resources/font.ppm", 10, 10);
 
     Window* window = window_new("Test", 600, 400, 600, 400, font);
     
-    SDL_Color white = (SDL_Color){143, 0, 255, 255};
-    SDL_Color black = (SDL_Color){0, 0, 0, 255};
+    SDL_Color white = (SDL_Color){255, 255, 255, 255};
     
-    /*
-    bool buffer[10][10];
+    window_set_color(window, white);
 
-    char* str = "Hello world!";
+    window_put_str_grid(window, 0, 0, "Ola", 4);
+    window_put_str_grid(window, 0, 1, "E da padaria", 4);
 
-    for (int i = 0; str[i] != '\0'; i++) {
-        font_get_char(font, str[i], buffer);
-        
-
-        window_set_color(window, white);
-        for (int y = 0; y < 20; y++) {
-            for (int x = 0; x < 20; x++) {
-                if (buffer[y / 2][x / 2]) {
-                    window_put_pixel(window, x + i * 20, y);
-                }
-            }
-        }
-    }
-    */
-
-    //window_put_char(window, 0, 0, 'H', 1);
+    window_put_char_grid(window, 0, 2, CP_SMILE_1, 4);
     
     window_refresh(window);
    
@@ -46,15 +31,19 @@ int main(int argc, char* argv[]) {
         SDL_PollEvent(&window->event);
     
         switch(window->event.type) {
+            case SDL_QUIT:
+                quit = true;
+                break;
             case SDL_KEYDOWN:
-                int key = window->event.key.keysym.sym;
-                switch (key) {
+                switch (window->event.key.keysym.sym) {
                     case SDLK_q:
                         quit = true;
                         break;
                 }
                 break;
         }
+
+        usleep(1);
     }
 
     return 0;
